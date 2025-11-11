@@ -1,0 +1,10 @@
+body {
+    margin: 0px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    background-color: dodgerblue;
+    padding: 10px;
+}

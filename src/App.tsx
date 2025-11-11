@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Layout, Flex, Card, Row, Col, Button, Input } from "antd";
+import {  Content, Footer } from "antd/es/layout/layout";
+import React from "react";
+
+import { Header } from "./components/layout/Header";
+
+
+
+const headerStyle: React.CSSProperties = {
+  textAlign: 'center',
+  color: '#fff',
+  height: 64,
+  paddingInline: 48,
+  lineHeight: '64px',
+  backgroundColor: '#4096ff',
+};
+
+const contentStyle: React.CSSProperties = {
+  margin: 'auto',
+};
+
+const footerStyle: React.CSSProperties = {
+  textAlign: 'center',
+  color: '#fff',
+  backgroundColor: '#4096ff',
+};
+
+const layoutStyle = {
+  borderRadius: 8,
+  overflow: 'hidden',
+  minHeight: '100vh',
+};
+
+const searchBarStyle: React.CSSProperties = { 
+  color: '#fff',
+  //height: 64,
+  padding: '24px 36px',
+  paddingInline: 48, 
+  backgroundColor: '#80b6ff',
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  return <Flex gap="middle" wrap>
+    <Layout style={layoutStyle}>
+      <Header/>
+      <Content style={contentStyle} >
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+        <Row style={searchBarStyle}>
+          <Input.Search placeholder="Search" variant="outlined" />
+        </Row>
+        <Row >
+
+          {[1, 2, 2, 2, 22, 4].map(a =>
+            <Col
+              xs={{ flex: '100%' }}
+              sm={{ flex: '50%' }}
+              md={{ flex: '33%' }}
+              lg={{ flex: '25%' }}
+              xl={{ flex: '20%' }}>
+              <Card title="Card title" variant="borderless" style={{ margin: 8 }}>
+                <p>Card content</p>
+                <p>Card content</p>
+                <p>Card content</p>
+              </Card>
+            </Col>
+          )
+          }
+        </Row>
+
+      </Content>
+      <Footer style={footerStyle}>Footer</Footer>
+    </Layout>
+  </Flex>
 }
+
 
 export default App
