@@ -1,12 +1,16 @@
+import { useAuthStore } from '@/context/AuthContext'
 import { Layout, Menu } from 'antd'
 const { Header: AntHeader } = Layout
 
 export const Header: React.FC = () => {
+
+    const { isAuthenticated } = useAuthStore()
+
     const items = [
         { key: 'home', label: 'Home' },
         { key: 'my-recipes', label: 'My Recipes' },
         { key: 'favorites', label: 'Favorites' },
-        { key: 'login', label: 'Login' },
+        isAuthenticated ? { key: 'profile', label: 'Profile' } : { key: 'login', label: 'Login' },
     ]
 
     return (

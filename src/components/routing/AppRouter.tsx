@@ -1,10 +1,10 @@
-import { isAuthenticated } from '../../utils/auth'
 import { HomePage } from '../../pages/HomePage'
 import { LoginPage } from '../../pages/Login'
 import { MyRecipesPage } from '../../pages/MyRecipes'
 import React, { type JSX } from 'react'
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import { SignUpPage } from '@/pages/SignUpPage'
+import { useAuthStore } from '@/context/AuthContext'
 
 interface RouteRecord {
     link: string,
@@ -15,7 +15,9 @@ interface RouteRecord {
 const loginRoute: RouteRecord = { link: '/login', pageComponent: <LoginPage /> }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    if (!isAuthenticated()) {
+    const { isAuthenticated } = useAuthStore()
+
+    if (!isAuthenticated) {
         return <Navigate to={loginRoute.link} replace />;
     }
 
