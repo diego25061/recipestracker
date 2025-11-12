@@ -5,6 +5,47 @@ body {
 .cards-grid {
     display: grid;
     grid-template-columns: auto auto auto auto;
-    background-color: dodgerblue;
     padding: 10px;
+}
+
+/*xs*/
+@media (min-width: 0px) {
+    .responsive-width {
+        width: 95%;
+    }
+}
+
+/*md*/
+@media (min-width: 768px) {
+    .responsive-width {
+        width: 75%;
+    }
+}
+
+/*xl*/
+@media (min-width: 1200px) {
+    .responsive-width {
+        width: 80%;
+    }
+} 
+
+/*xs*/
+@media (min-width: 0px) {
+    .responsive-width-larger {
+        width: 95%;
+    }
+}
+
+/*md*/
+@media (min-width: 768px) {
+    .responsive-width-larger {
+        width: 90%;
+    }
+}
+
+/*xl*/
+@media (min-width: 1200px) {
+    .responsive-width-larger {
+        width: 85%;
+    }
 }

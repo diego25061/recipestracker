@@ -1,12 +1,12 @@
-import { Layout, Button, Row, Col, Card, Tag, Space, Popconfirm, message } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import {   Button, message, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { recipes } from '../mock/recipes';
-
-const { Content } = Layout;
+import { RecipeGrid } from '@/components/RecipeGrid';
+  
+const { Title } = Typography
 
 export const MyRecipesPage: React.FC = () => {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     const handleEdit = (id: number) => {
         message.info(`Edit recipe #${id}`);
@@ -15,73 +15,45 @@ export const MyRecipesPage: React.FC = () => {
 
     const handleDelete = (id: number) => {
         message.success(`Recipe #${id} deleted (mock)`);
+        // TODO: Remove from state later
     };
 
     const handleAddNew = () => {
         message.info('Redirecting to Create Recipe...');
+        // navigate('/recipes/new');
     };
 
     return (
-        <Layout>
-            <Content style={{ padding: '2rem' }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '1.5rem',
-                    }}
-                >
-                    <h1 style={{ margin: 0 }}>🍳 My Recipes</h1>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        size="large"
-                        onClick={handleAddNew}
+        <>
+            <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'white', padding: 24 }}>
+                <div className='responsive-width-larger'>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
                     >
-                        Add New Recipe
-                    </Button>
+                        <Title level={3} style={{ margin: 0 }}>
+                            🍳 My Recipes
+                        </Title>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            size="large"
+                            onClick={handleAddNew}
+                        >
+                            Add New Recipe
+                        </Button>
+                    </div>
                 </div>
-
-                <Row gutter={[16, 16]} justify="start">
-                    {recipes.map((r) => (
-                        <Col key={r.id} xs={24} sm={12} md={8} lg={6}>
-                            <Card
-                                hoverable
-                                cover={
-                                    <img
-                                        alt={r.title}
-                                        src={r.image}
-                                        style={{ height: 180, objectFit: 'cover' }}
-                                    />
-                                }
-                                actions={[
-                                    <EditOutlined
-                                        key="edit"
-                                        onClick={() => handleEdit(r.id)}
-                                    />,
-                                    <Popconfirm
-                                        key="delete"
-                                        title="Delete this recipe?"
-                                        okText="Yes"
-                                        cancelText="No"
-                                        onConfirm={() => handleDelete(r.id)}
-                                    >
-                                        <DeleteOutlined />
-                                    </Popconfirm>,
-                                ]}
-                            >
-                                <Card.Meta title={r.title} description={`by ${r.author}`} />
-                                <Space wrap style={{ marginTop: '0.5rem' }}>
-                                    {r.tags.map((tag) => (
-                                        <Tag key={tag}>{tag}</Tag>
-                                    ))}
-                                </Space>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-            </Content>
-        </Layout>
+            </div>
+            <RecipeGrid
+                recipes={recipes}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                renderMode='editDelete'
+            />
+        </>
     );
 };
