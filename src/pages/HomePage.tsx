@@ -1,29 +1,13 @@
 import { useState } from 'react';
-import { Grid, Col, Flex, Layout, Row, Space, Tag, Card } from 'antd';
+import { Grid, Col, Layout, Row, Space, Tag, Card } from 'antd';
 import { Header } from '../components/layout/Header';
 import { SearchBar } from '../components/SearchBar';
 import { TagFilter } from '../components/TagFilter';
 import { RecipeGrid } from '../components/RecipeGrid';
 import { recipes } from '../mock/recipes';
-import { Footer } from 'antd/es/layout/layout';
-
 const { useBreakpoint } = Grid;
 
 const { Content } = Layout;
-
-const contentStyle: React.CSSProperties = {
-    //margin: 'auto',
-};
-
-const footerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff',
-};
-
-const layoutStyle = {
-    minHeight: '100vh',
-};
 
 export const HomePage: React.FC = () => {
     const [search, setSearch] = useState('');
@@ -63,95 +47,87 @@ export const HomePage: React.FC = () => {
         }
     }
 
-    return (
-        <>
-            <Flex gap="middle" wrap>
-                <Layout style={layoutStyle}>
-                    <Header />
-                    <Content style={contentStyle} >
+    return (<>
+        <Row>
 
-                        <Row>
+            <Col
+                xs={{ flex: '100%' }}
+                md={{ flex: '70%' }}
+                style={{
+                    backgroundColor: 'teal',
+                    margin: '0px auto'
+                }}>
+                search baar
+            </Col>
+        </Row>
+        <Row>
+            <Col
+                xs={{ flex: '100%' }}
+                md={{ flex: '80%' }}
+                xl={{ flex: '70%' }}
+                style={{
+                    backgroundColor: 'pink',
+                    margin: '0px auto'
+                }}>
+                contentt
 
-                            <Col
-                                xs={{ flex: '100%' }}
-                                md={{ flex: '70%' }}
-                                style={{
-                                    backgroundColor: 'teal',
-                                    margin: '0px auto'
-                                }}>
-                                search baar
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col
-                                xs={{ flex: '100%' }}
-                                md={{ flex: '80%' }}
-                                xl={{ flex: '70%' }}
-                                style={{
-                                    backgroundColor: 'pink',
-                                    margin: '0px auto'
-                                }}>
-                                contentt
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-
-                                    {recipes.map(recipe => (
-                                        <>
-                                            <div style={{
-                                                flex: 1,
-                                                backgroundColor: 'gray',
-                                                border: ' 2px solid black'
-                                            }} >
-                                                {recipe.title}
-                                            </div>
-                                        </>
-                                    ))}
-
-                                </div>
-                                <br />
-                                aaaaa
-                            </Col>
-                        </Row>
-                        {'========================================== aaaaaaaaa'}
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-
-                            <div className='cards-grid'
-                                style={{
-                                    width: viewportLevel >= 5 ? '80%' : viewportLevel >= 3 ? '75%' : '95%',
-                                    //https://stackoverflow.com/questions/43311943/prevent-content-from-expanding-grid-items
-                                    gridTemplateColumns: Array(viewportLevel).fill(`minmax(0, 1fr)`).join(' ')
-                                }}>
-                                {recipes.map(r => (
-                                    <Card
-                                        hoverable
-                                        cover={<img alt={r.title} src={r.image} />}
-                                        style={{ margin: 4 }}
-                                    >
-                                        <Card.Meta title={r.title} description={`by ${r.author}`} />
-                                        <div style={{ marginTop: '0.5rem' }}>
-                                            {r.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}
-                                        </div>
-                                    </Card>
-                                ))}
+                    {recipes.map(recipe => (
+                        <>
+                            <div style={{
+                                flex: 1,
+                                backgroundColor: 'gray',
+                                border: ' 2px solid black'
+                            }} >
+                                {recipe.title}
                             </div>
+                        </>
+                    ))}
+
+                </div>
+                <br />
+                aaaaa
+            </Col>
+        </Row>
+        {'========================================== aaaaaaaaa'}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+
+            <div className='cards-grid'
+                style={{
+                    width: viewportLevel >= 5 ? '80%' : viewportLevel >= 3 ? '75%' : '95%',
+                    //https://stackoverflow.com/questions/43311943/prevent-content-from-expanding-grid-items
+                    gridTemplateColumns: Array(viewportLevel).fill(`minmax(0, 1fr)`).join(' ')
+                }}>
+                {recipes.map(r => (
+                    <Card
+                        hoverable
+                        cover={<img alt={r.title} src={r.image} />}
+                        style={{ margin: 4 }}
+                    >
+                        <Card.Meta title={r.title} description={`by ${r.author}`} />
+                        <div style={{ marginTop: '0.5rem' }}>
+                            {r.tags.map(tag => <Tag key={tag}>{tag}</Tag>)}
                         </div>
-                        
-                    </Content>
-                    <Footer style={footerStyle}>Footer</Footer>
-                </Layout>
-            </Flex>
-            <Layout>
-                <Header />
-                <Content style={{ padding: '2rem' }}>
-                    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                        <Space wrap>
-                            <SearchBar onSearch={setSearch} />
-                            <TagFilter tags={allTags} selected={selectedTags} onChange={setSelectedTags} />
-                        </Space>
-                        <RecipeGrid recipes={filtered} />
+                    </Card>
+                ))}
+            </div>
+        </div>
+
+{/*
+        <Layout>
+            <Header />
+            <Content style={{ padding: '2rem' }}>
+                <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                    <Space wrap>
+                        <SearchBar onSearch={setSearch} />
+                        <TagFilter tags={allTags} selected={selectedTags} onChange={setSelectedTags} />
                     </Space>
-                </Content>
-            </Layout>
-        </>
+                    <RecipeGrid recipes={filtered} />
+                </Space>
+            </Content>
+        </Layout>
+        */}
+    </>
     );
 };
