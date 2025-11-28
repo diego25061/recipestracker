@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
     const location = useLocation();
 
     const items = SiteRoutes
-        .filter(x => !!x.headerTitle)
+        .filter(x => !!x.headerTitle && (!x.authOnly || isAuthenticated))
         .map(x => ({
             key: x.link,
             label: x.headerTitle

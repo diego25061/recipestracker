@@ -3,7 +3,6 @@ import { LoginPage } from '../../pages/Login'
 import { MyRecipesPage } from '../../pages/MyRecipes'
 import { type JSX } from 'react'
 import { SignUpPage } from '@/pages/SignUpPage'
-import { FavoritesPage } from '@/pages/Favorites'
 
 interface RouteRecord {
     link: string,
@@ -14,11 +13,11 @@ interface RouteRecord {
 }
 
 export const SiteLoginRoute: RouteRecord = { link: '/login', pageComponent: <LoginPage />, omitLayout: true }
+export const HomeLoginRoute: RouteRecord = { link: '/', pageComponent: <HomePage />, headerTitle: 'Home' }
 
 export const SiteRoutes: RouteRecord[] = [
     SiteLoginRoute,
+    HomeLoginRoute,
     { link: '/signup', pageComponent: <SignUpPage />, omitLayout: true },
-    { link: '/', pageComponent: <HomePage />, headerTitle: 'Home' },
-    { link: '/my-recipes', pageComponent: <MyRecipesPage />, headerTitle: 'My Recipes' },
-    { link: '/favorites', pageComponent: <FavoritesPage />, authOnly: false, headerTitle: 'Favorites' },
+    { link: '/my-recipes', pageComponent: <MyRecipesPage />, authOnly: true, headerTitle: 'My Recipes' }, 
 ]
