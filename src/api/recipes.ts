@@ -10,18 +10,18 @@ export const getPublicRecipes = async (): Promise<RecipeDetailsData[]> => {
     return LocalMemoryApi.fetchPublicRecipes()
 }
 
-export const getUserRecipes = async (token:string): Promise<RecipeDetailsData[]> => {
+export const getUserRecipes = async (token: string): Promise<RecipeDetailsData[]> => {
     return LocalMemoryApi.fetchUserRecipes(token)
 }
 
-export const fetchRecipeDetails = async (recipeId: number, userId?: number): Promise<RecipeDetailsData | undefined> => {
-    return LocalMemoryApi.fetchRecipeDetails(recipeId, userId)
+export const fetchRecipeDetails = async (token: string | null, recipeId: number): Promise<RecipeDetailsData | undefined> => {
+    return LocalMemoryApi.fetchRecipeDetails(token, recipeId)
 }
 
-export const postRecipeComment = async (userId: number, recipeId: number, text: string): Promise<RecipeComment> => {
-    return LocalMemoryApi.postComment(userId, recipeId, text)
+export const postRecipeComment = async (token: string, recipeId: number, text: string): Promise<RecipeComment> => {
+    return LocalMemoryApi.postComment(token, recipeId, text)
 }
 
-export const setFavoriteRecipe = async (userId: number, recipeId: number, newVal: boolean): Promise<boolean> => {
-    return LocalMemoryApi.setFavoriteRecipe(userId, recipeId, newVal)
+export const setFavoriteRecipe = async (token: string, recipeId: number, newVal: boolean): Promise<boolean> => {
+    return LocalMemoryApi.setFavoriteRecipe(token, recipeId, newVal)
 }

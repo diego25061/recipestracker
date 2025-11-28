@@ -6,9 +6,9 @@ const { Header: AntHeader } = Layout
 
 export const Header: React.FC = () => {
 
-    const { isAuthenticated, logout } = useAuthStore();
-    const navigate = useNavigate();
-    const location = useLocation();
+    const { isAuthenticated, logout } = useAuthStore()
+    const navigate = useNavigate()
+    const location = useLocation()
 
     const items = SiteRoutes
         .filter(x => !!x.headerTitle && (!x.authOnly || isAuthenticated))
@@ -23,8 +23,8 @@ export const Header: React.FC = () => {
         }
     }
 
-    const handleLogin = () => navigate(SiteLoginRoute.link);
-    const handleLogout = () => logout?.();
+    const handleLogin = () => navigate(SiteLoginRoute.link)
+    const handleLogout = () => logout?.()
 
     return (
         <AntHeader style={{ display: 'flex', alignItems: 'center', borderRadius: 0 }}>

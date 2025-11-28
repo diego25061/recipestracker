@@ -3,9 +3,10 @@ import { users } from "./users"
 import type { UserViewData } from "@/models/User"
 import type { LoginResult, LoginUserData } from "@/models/Auth"
 import { InMemoryDB } from "./memoryDb"
+import { isDefinedNotEmpty } from "@/utils/common"
 
 interface ApiActionsRecipes {
-    fetchRecipeDetails: (userId: number, recipeId: number) => Promise<RecipeDetailsData | undefined>
+    fetchRecipeDetails: (token: string | null, recipeId: number) => Promise<RecipeDetailsData | undefined>
 }
 
 const asTimedPromise = <T>(
@@ -55,11 +56,14 @@ export class InMemoryApi implements ApiActionsRecipes {
             }))
     }
 
-    private userIdFromToken = (token: string): number => parseInt(token.substring(0, token.indexOf('_') ?? 0))
+    private userIdFromToken = (token: string): number => {
+        const userId = parseInt(token.substring(0, token.indexOf('_') ?? 0))
+        if (!users.find(u => u.id === userId)) throw 'user not found: invalid token'
+        return userId
+    }
 
     //public controllers?
     public fetchPublicRecipes = async (): Promise<RecipeDetailsData[]> => {
-        //throw 'ctmre'
         return asTimedPromise<RecipeDetailsData[]>((resolve) => {
             const recs: RecipeDetailsData[] = this.getAllRecipes()
             resolve(recs)
@@ -84,13 +88,14 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-    public setFavoriteRecipe = async (userId: number, recipeId: number, newValue: boolean): Promise<boolean> => {
+    public setFavoriteRecipe = async (token: string, recipeId: number, newValue: boolean): Promise<boolean> => {
         return asTimedPromise<boolean>((resolve) => {
             const recipe = InMemoryDB.recipes.find(r => r.id === recipeId)
             if (!recipe) {
                 throw ('recipe not found')
             }
 
+            const userId = this.userIdFromToken(token)
             recipe.favoritedBy = recipe.favoritedBy ?? []
             if (newValue === false) {
                 recipe.favoritedBy = recipe.favoritedBy.filter(id => id !== userId)
@@ -133,10 +138,7 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-
-    //....... to do
-
-    public fetchRecipeDetails = async (recipeId: number, userId?: number): Promise<RecipeDetailsData | undefined> => {
+    public fetchRecipeDetails = async (token: string | null, recipeId: number): Promise<RecipeDetailsData | undefined> => {
         return asTimedPromise((resolve) => {
             const rec = InMemoryDB.recipes.find(x => x.id === recipeId)
             if (!rec) {
@@ -146,7 +148,7 @@ export class InMemoryApi implements ApiActionsRecipes {
             const fullRecipe: RecipeDetailsData = {
                 ...rec,
                 authorData: this.getUserViewData(rec.authorId),
-                isFavorite: userId ? this.isFavoritedByUser(rec, userId) : undefined,
+                isFavorite: isDefinedNotEmpty(token) ? this.isFavoritedByUser(rec, this.userIdFromToken(token)) : undefined,
                 comments: rec.comments?.map(x => ({
                     ...x,
                     authorData: this.getUserViewData(x.userId)
@@ -156,33 +158,27 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-    //list recipes created by user
-    /*
-    public listMyRecipes = async (userId: number): Promise<RecipeDetailsData[]> => {
-        return asTimedPromise<RecipeDetailsData[]>((resolve) => {
-            resolve(
-                InMemoryDB.recipes
-                    .filter(r => r.authorId === userId)
-                    .map(r => ({
-                        ...r,
-                        isFavorite: this.isFavoritedByUser(r, userId)
-                    }))
-            )
+    public postComment = async (token: string, recipeId: number, text: string): Promise<RecipeComment> => {
+        return asTimedPromise((resolve) => {
+            const recipe = InMemoryDB.recipes.find(r => r.id === recipeId)
+            if (!recipe) {
+                throw 'recipe not found'
+            }
+
+            const comment: RecipeComment = {
+                commentId: this.nextCommentId++,
+                userId: this.userIdFromToken(token),
+                text
+            }
+
+            recipe.comments = recipe.comments ?? []
+            recipe.comments.push(comment)
+
+            resolve(comment)
         })
     }
 
-    public listFavorites = async (userId: number): Promise<RecipeDetailsData[]> => {
-        return asTimedPromise<RecipeDetailsData[]>((resolve) => {
-            resolve(
-                InMemoryDB.recipes
-                    .filter(r => this.isFavoritedByUser(r, userId))
-                    .map(r => ({
-                        ...r,
-                        isFavorite: true
-                    }))
-            )
-        })
-    }*/
+    //....... to do
 
     public createRecipe = async (recipe: RecipeInputData): Promise<Recipe> => {
         return asTimedPromise<Recipe>((resolve) => {
@@ -220,26 +216,6 @@ export class InMemoryApi implements ApiActionsRecipes {
         return asTimedPromise<boolean>((resolve) => {
             InMemoryDB.recipes = InMemoryDB.recipes.filter(r => r.id !== recipeId)
             resolve(InMemoryDB.recipes.every(x => x.id !== recipeId))
-        })
-    }
-
-    public postComment = async (userId: number, recipeId: number, text: string): Promise<RecipeComment> => {
-        return asTimedPromise((resolve) => {
-            const recipe = InMemoryDB.recipes.find(r => r.id === recipeId)
-            if (!recipe) {
-                throw 'recipe not found'
-            }
-
-            const comment: RecipeComment = {
-                commentId: this.nextCommentId++,
-                userId,
-                text
-            }
-
-            recipe.comments = recipe.comments ?? []
-            recipe.comments.push(comment)
-
-            resolve(comment)
         })
     }
 

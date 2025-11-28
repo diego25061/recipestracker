@@ -11,6 +11,7 @@ import { notifyError, notifySuccess } from '@/utils/notifications'
 import { LoadingSpinner } from '../LoadingSpinner'
 import { css } from '@emotion/css'
 import { CommentBlock } from '../RecipeCommentBlock'
+import { isDefinedNotEmpty } from '@/utils/common'
 const { Title } = Typography;
 
 
@@ -77,20 +78,19 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
     const [commentText, setCommentText] = useState('')
     const { notification: notificationInstance } = App.useApp()
 
-    const { isAuthenticated, userData } = useAuthStore()
-    //const isAuthenticated = true
+    const { isAuthenticated, jwt } = useAuthStore()
 
     const loadRecipe = useCallback(async () => {
         setLoading(true)
         try {
-            const data = await fetchRecipeDetails(recipeId)
+            const data = await fetchRecipeDetails(jwt, recipeId)
             setRecipe(data)
             setFavorite(data?.isFavorite ?? false)
         } catch (err) {
             console.error(err)
         }
         setLoading(false)
-    }, [recipeId])
+    }, [recipeId, jwt])
 
     useEffect(() => {
         if (!recipeId) {
@@ -102,10 +102,10 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
 
     const handleAddComment = async () => {
         const comment = commentText.trim()
-        if (!recipe || !comment || !userData) return
+        if (!recipe || !comment || !isDefinedNotEmpty(jwt)) return
         try {
             setCanPost(false)
-            await postRecipeComment(userData.userId, recipe.id, comment)
+            await postRecipeComment(jwt, recipe.id, comment)
             notifySuccess(
                 notificationInstance,
                 'Comment posted',
@@ -128,10 +128,10 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
     }
 
     const handleToggleFavorite = async () => {
-        if (!recipe || favorite === undefined) return
+        if (!recipe || favorite === undefined || !isDefinedNotEmpty(jwt)) return
 
         try {
-            const updated = await setFavoriteRecipe(0, recipe.id, !favorite)
+            const updated = await setFavoriteRecipe(jwt, recipe.id, !favorite)
             setFavorite(updated)
         } catch (err) {
             console.error(err)
