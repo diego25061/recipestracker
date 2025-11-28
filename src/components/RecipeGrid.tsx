@@ -1,17 +1,22 @@
 import { RecipeCard } from './RecipeCard'
 import { Grid } from 'antd';
-import type { Recipe } from '@/models/Recipe';
+import type { RecipeDetailsData } from '@/models/Recipe';
+import { RecipeDetailsModal } from './modals/RecipeDetailsModal';
+import { useState } from 'react';
 
 const { useBreakpoint } = Grid;
 
 interface RecipeGridProps {
-    recipes: Recipe[]
+    recipes: RecipeDetailsData[]
     renderMode: 'view' | 'editDelete'
+    //onRecipeClick: (id: number) => void
     handleEdit?: (id: number) => void
     handleDelete?: (id: number) => void
 }
 
 export const RecipeGrid: React.FC<RecipeGridProps> = ({ recipes, renderMode, handleEdit, handleDelete }) => {
+
+    const [selectedRecipeId, setSelectedRecipeId] = useState<number>(0)
     const screens = useBreakpoint()
 
     const lvls = [
@@ -34,6 +39,10 @@ export const RecipeGrid: React.FC<RecipeGridProps> = ({ recipes, renderMode, han
         }
     }
 
+    const handleRecipeClick = (id: number) => {
+        setSelectedRecipeId(id)
+    }
+
     return <>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div className='cards-grid'
@@ -47,9 +56,10 @@ export const RecipeGrid: React.FC<RecipeGridProps> = ({ recipes, renderMode, han
                         key={r.id}
                         id={r.id}
                         title={r.title}
-                        author={r.author}
+                        author={r.authorData.username}
                         image={r.imageUrl}
                         tags={r.tags}
+                        onRecipeClick={handleRecipeClick}
                         handleEdit={handleEdit}
                         handleDelete={handleDelete}
                         renderMode={renderMode}
@@ -57,5 +67,10 @@ export const RecipeGrid: React.FC<RecipeGridProps> = ({ recipes, renderMode, han
                 ))}
             </div>
         </div>
+
+        <RecipeDetailsModal
+            recipeId={selectedRecipeId}
+            onClose={() => setSelectedRecipeId(0)}
+        />
     </>
 }

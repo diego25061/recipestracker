@@ -1,12 +1,18 @@
+import type { LoginUserData } from '@/models/Auth'
+import { isDefinedNotEmpty } from '@/utils/common'
 import { create } from 'zustand'
 
 const JWT_KEY = 'jwt'
+const USERDATA_KEY = 'user_data'
 
 interface AuthContextType {
     jwt: string | null
     setJwt: (token: string | null) => void
     isAuthenticated: boolean
     logout: () => void
+
+    userData: LoginUserData | null
+    setUserData: (userData: LoginUserData) => void
 }
 
 export const useAuthStore = create<AuthContextType>((set) => ({
@@ -25,6 +31,19 @@ export const useAuthStore = create<AuthContextType>((set) => ({
 
     logout: () => {
         localStorage.removeItem(JWT_KEY)
-        set({ jwt: null, isAuthenticated: false })
+        localStorage.removeItem(USERDATA_KEY)
+        set({ jwt: null, isAuthenticated: false, userData: null })
+    },
+
+    userData: isDefinedNotEmpty(localStorage.getItem(USERDATA_KEY)) ? JSON.parse(localStorage.getItem(USERDATA_KEY)!) : null,
+    setUserData: (userData) => {
+        if (userData) {
+            localStorage.setItem(USERDATA_KEY, JSON.stringify(userData))
+            set({ userData })
+        } else {
+            localStorage.removeItem(USERDATA_KEY)
+            set({ userData: null })
+        }
     }
+
 }))

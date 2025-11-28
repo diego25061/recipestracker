@@ -1,43 +1,60 @@
-import React from 'react'
-import { Card, Form, Input, Button, Typography, Space, Layout } from 'antd'
+import React, { useState } from 'react'
+import { Card, Form, Input, Button, Typography, Space, Layout, Alert } from 'antd'
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { apiLogin } from '@/api/auth'
+import { useAuthStore } from '@/context/AuthContext'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 const { Title } = Typography
 const { Content, Footer } = Layout
 
 const layoutStyle: React.CSSProperties = {
     minHeight: '100vh',
-};
+}
 
 const contentStyle: React.CSSProperties = {
-    flex:1,
+    flex: 1,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-};
+}
 
 const cardStyle: React.CSSProperties = {
     width: 380,
     borderRadius: 12,
-};
+}
 
 const footerStyle: React.CSSProperties = {
     textAlign: 'center',
     color: '#fff',
     backgroundColor: '#4096ff',
-};
+}
 
 export const LoginPage: React.FC = () => {
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | undefined>(undefined)
+    const { setJwt, setUserData } = useAuthStore()
+    const navigate = useNavigate()
 
-    const onFinish = (values: { email: string; password: string }) => {
-        console.log('Login values:', values);
-        localStorage.setItem('jwt', 'FAKE_JWT');
-        navigate('/');
-    };
+    const onLogin = async (values: { email: string; password: string }) => {
+        try {
+            setLoading(true)
+            const loginResult = await apiLogin(values.email, values.password)
+            setError(undefined)
+            setJwt(loginResult.jwt)
+            setUserData(loginResult.userData)
+            navigate('/')
+        } catch (err) {
+            console.error(err)
+            //needs more tailored messages based on login logic or client networking
+            setError("Invalid username or password")
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <Layout style={layoutStyle}>
@@ -53,7 +70,7 @@ export const LoginPage: React.FC = () => {
                         <Form
                             name="login"
                             layout="vertical"
-                            onFinish={onFinish}
+                            onFinish={onLogin}
                             autoComplete="off"
                         >
                             <Form.Item
@@ -79,19 +96,31 @@ export const LoginPage: React.FC = () => {
                                     placeholder="••••••••"
                                 />
                             </Form.Item>
-
+                            {error && (
+                                <Form.Item>
+                                    <Alert
+                                        message={error}
+                                        type="error"
+                                        showIcon
+                                    />
+                                </Form.Item>
+                            )}
                             <Form.Item>
-                                <Space
-                                    direction="horizontal"
-                                    style={{ width: '100%', justifyContent: 'space-between' }}
-                                >
-                                    <Button type="primary" htmlType="submit">
-                                        Login
-                                    </Button>
-                                    <Button type="link" onClick={() => navigate('/signup')}>
-                                        → Sign Up
-                                    </Button>
-                                </Space>
+                                {
+                                    loading ?
+                                        <LoadingSpinner style={{ padding: '0px' }} /> :
+                                        <Space
+                                            direction="horizontal"
+                                            style={{ width: '100%', justifyContent: 'space-between' }}
+                                        >
+                                            <Button type="primary" htmlType="submit">
+                                                Login
+                                            </Button>
+                                            <Button type="link" onClick={() => navigate('/signup')}>
+                                                → Sign Up
+                                            </Button>
+                                        </Space>
+                                }
                             </Form.Item>
                         </Form>
                     </Space>
@@ -102,5 +131,5 @@ export const LoginPage: React.FC = () => {
                 Tip: “Cooking is coding, but tastier.”
             </Footer>
         </Layout>
-    );
-};
+    )
+}
