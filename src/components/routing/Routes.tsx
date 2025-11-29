@@ -1,8 +1,8 @@
 import { HomePage } from '../../pages/HomePage'
-import { LoginPage } from '../../pages/Login'
+import { LoginPage } from '../../pages/Login/Login'
 import { MyRecipesPage } from '../../pages/MyRecipes'
 import { type JSX } from 'react'
-import { SignUpPage } from '@/pages/SignUpPage'
+import { SignUpPage } from '@/pages/Login/SignUpPage'
 
 interface RouteRecord {
     link: string,

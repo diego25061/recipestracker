@@ -2,7 +2,20 @@ import { useAuthStore } from '@/context/AuthContext'
 import { Button, Layout, Menu, Space } from 'antd'
 import { SiteLoginRoute, SiteRoutes } from '../routing/Routes'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { css } from '@emotion/css'
 const { Header: AntHeader } = Layout
+
+const headerStyle = css`
+    display: flex;
+    align-items: center;
+    border-radius: 0px;
+`
+
+const titleStyle = css`
+    color: white;
+    font-weight: bold;
+    margin-right: 2rem;
+`
 
 export const Header: React.FC = () => {
 
@@ -27,8 +40,8 @@ export const Header: React.FC = () => {
     const handleLogout = () => logout?.()
 
     return (
-        <AntHeader style={{ display: 'flex', alignItems: 'center', borderRadius: 0 }}>
-            <div style={{ color: 'white', fontWeight: 'bold', marginRight: '2rem' }}>🍳 Recipe Tracker</div>
+        <AntHeader className={headerStyle}>
+            <div className={titleStyle}>🍳 Recipe Tracker</div>
             <Menu
                 theme="dark"
                 mode="horizontal"

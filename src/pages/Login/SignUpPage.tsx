@@ -2,33 +2,10 @@ import React from 'react'
 import { Card, Form, Input, Button, Typography, Space, Layout } from 'antd'
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { loginCardStyle, loginContentStyle, loginFooterStyle, loginLayoutStyle } from '@/styles/LoginStyles'
 
 const { Title } = Typography
 const { Content, Footer } = Layout
-
-const layoutStyle: React.CSSProperties = {
-    minHeight: '100vh'
-}
-
-const contentStyle: React.CSSProperties = {
-    flex: 1,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-}
-
-const cardStyle: React.CSSProperties = {
-    width: 380,
-    borderRadius: 12
-}
-
-const footerStyle: React.CSSProperties = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff'
-}
 
 export const SignUpPage: React.FC = () => {
     const navigate = useNavigate()
@@ -40,9 +17,9 @@ export const SignUpPage: React.FC = () => {
     }
 
     return (
-        <Layout style={layoutStyle}>
-            <Content style={contentStyle}>
-                <Card title="🍳 RecipeVault" style={cardStyle}>
+        <Layout className={loginLayoutStyle}>
+            <Content className={loginContentStyle}>
+                <Card title="🍳 Recipe Tracker" className={loginCardStyle}>
                     <Space direction="vertical" size="large" style={{ width: '100%' }}>
                         <div style={{ textAlign: 'center' }}>
                             <Title level={4} style={{ margin: 0 }}>
@@ -123,7 +100,7 @@ export const SignUpPage: React.FC = () => {
                 </Card>
             </Content>
 
-            <Footer style={footerStyle}>
+            <Footer className={loginFooterStyle}>
                 “Cooking is coding, but tastier.”
             </Footer>
         </Layout>

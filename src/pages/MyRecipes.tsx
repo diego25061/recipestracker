@@ -1,17 +1,17 @@
-import { Alert, Button, message, Typography } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { RecipeGrid } from '@/components/RecipeGrid';
-import { useEffect, useState } from 'react';
-import type { RecipeDetailsData } from '@/models/Recipe';
-import { getUserRecipes } from '@/api/recipes';
-import { PaddingContainer } from '@/components/layout/PaddingContainer';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { useAuthStore } from '@/context/AuthContext';
+import { Alert, Button, message, Typography } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { RecipeGrid } from '@/components/RecipeGrid'
+import { useEffect, useState } from 'react'
+import type { RecipeDetailsData } from '@/models/Recipe'
+import { getUserRecipes } from '@/api/recipes'
+import { PaddingContainer } from '@/components/layout/PaddingContainer'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { useAuthStore } from '@/context/AuthContext'
 
 const { Title } = Typography
 
 export const MyRecipesPage: React.FC = () => {
-    //const navigate = useNavigate();
+    //const navigate = useNavigate()
     const [recipes, setRecipes] = useState<RecipeDetailsData[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -36,22 +36,22 @@ export const MyRecipesPage: React.FC = () => {
         }
 
         load()
-    }, [])
+    }, [jwt, isAuthenticated])
 
     const handleEdit = (id: number) => {
-        message.info(`Edit recipe #${id}`);
-        // navigate(`/recipes/edit/${id}`);
-    };
+        message.info(`Edit recipe #${id}`)
+        // navigate(`/recipes/edit/${id}`)
+    }
 
     const handleDelete = (id: number) => {
-        message.success(`Recipe #${id} deleted (mock)`);
+        message.success(`Recipe #${id} deleted (mock)`)
         // TODO: Remove from state later
-    };
+    }
 
     const handleAddNew = () => {
-        message.info('Redirecting to Create Recipe...');
-        // navigate('/recipes/new');
-    };
+        message.info('Redirecting to Create Recipe...')
+        // navigate('/recipes/new')
+    }
 
     return (
         <>
@@ -98,5 +98,5 @@ export const MyRecipesPage: React.FC = () => {
                 renderMode='editDelete'
             />
         </>
-    );
-};
+    )
+}
