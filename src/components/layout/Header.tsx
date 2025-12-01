@@ -1,8 +1,9 @@
 import { useAuthStore } from '@/context/AuthContext'
-import { Button, Layout, Menu, Space } from 'antd'
+import { Avatar, Button, Dropdown, Layout, Menu, Space } from 'antd'
 import { SiteLoginRoute, SiteRoutes } from '../routing/Routes'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { css } from '@emotion/css'
+import { UserOutlined } from '@ant-design/icons'
 const { Header: AntHeader } = Layout
 
 const headerStyle = css`
@@ -19,7 +20,7 @@ const titleStyle = css`
 
 export const Header: React.FC = () => {
 
-    const { isAuthenticated, logout } = useAuthStore()
+    const { isAuthenticated, logout, userData } = useAuthStore()
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -39,6 +40,32 @@ export const Header: React.FC = () => {
     const handleLogin = () => navigate(SiteLoginRoute.link)
     const handleLogout = () => logout?.()
 
+    const userMenu = {
+        items: [
+            {
+                key: 'user-info',
+                label: (
+                    <div style={{ padding: '4px 8px', cursor: 'default' }}>
+                        <div style={{ fontWeight: 'bold' }}>
+                            {userData?.userFullName}
+                        </div>
+                    </div>
+                ),
+                disabled: true,
+            },
+            {
+                type: 'divider',
+            },
+            {
+                key: 'logout',
+                label: 'Logout',
+                onClick: handleLogout,
+            },
+        ],
+    }
+
+    const userImage = userData?.userProfilePicture ?? null
+
     return (
         <AntHeader className={headerStyle}>
             <div className={titleStyle}>🍳 Recipe Tracker</div>
@@ -52,9 +79,16 @@ export const Header: React.FC = () => {
             />
             <Space>
                 {isAuthenticated ? (
-                    <Button type="default" onClick={handleLogout}>
-                        Logout
-                    </Button>
+                    //to solve linter error caused by antd menu/divider bug
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    <Dropdown menu={userMenu as any} placement="bottomRight">
+                        <Avatar
+                            size="large"
+                            src={userImage || undefined}
+                            icon={!userImage ? <UserOutlined /> : undefined}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    </Dropdown>
                 ) : (
                     <Button type="primary" onClick={handleLogin}>
                         Login

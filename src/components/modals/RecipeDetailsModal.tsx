@@ -147,6 +147,7 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
         <Modal
             open={!!recipeId}
             onCancel={onClose}
+            closable={false}
             footer={null}
             width={800}
         >

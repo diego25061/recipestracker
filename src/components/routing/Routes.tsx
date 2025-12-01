@@ -3,6 +3,7 @@ import { LoginPage } from '../../pages/Login/Login'
 import { MyRecipesPage } from '../../pages/MyRecipes'
 import { type JSX } from 'react'
 import { SignUpPage } from '@/pages/Login/SignUpPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 
 interface RouteRecord {
     link: string,
@@ -19,5 +20,6 @@ export const SiteRoutes: RouteRecord[] = [
     SiteLoginRoute,
     HomeLoginRoute,
     { link: '/signup', pageComponent: <SignUpPage />, omitLayout: true },
-    { link: '/my-recipes', pageComponent: <MyRecipesPage />, authOnly: true, headerTitle: 'My Recipes' }, 
+    { link: '/my-recipes', pageComponent: <MyRecipesPage />, authOnly: true, headerTitle: 'My Recipes' },
+    { link: '*', pageComponent: <NotFoundPage /> },
 ]

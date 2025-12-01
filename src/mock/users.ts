@@ -3,9 +3,9 @@ import type { User } from "@/models/User";
 export const users: User[] = [
     {
         id: 1,
-        username: 'Carmin B.',
-        profilePicUrl: 'https://randomuser.me/api/portraits/men/42.jpg',
-        loginUser: 'carmin',
+        username: 'Carmen B.',
+        profilePicUrl: 'https://shapes.inc/api/public/avatar/carmencarmyberzatto',
+        loginUser: 'carmen',
         pwd: '123'
     },
     {
