@@ -27,5 +27,9 @@ export const setFavoriteRecipe = async (token: string, recipeId: number, newVal:
 }
 
 export const postRecipe = async (token: string, recipeData: CreateRecipeDto): Promise<RecipeDetailsData> => {
-    return LocalMemoryApi.createRecipe(token,recipeData)
+    return LocalMemoryApi.createRecipe(token, recipeData)
+}
+
+export const updateRecipe = async (token: string, recipeId: number, recipeData: CreateRecipeDto): Promise<RecipeDetailsData> => {
+    return LocalMemoryApi.updateRecipe(token, recipeId, recipeData)
 }

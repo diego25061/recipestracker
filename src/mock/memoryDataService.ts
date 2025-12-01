@@ -1,4 +1,4 @@
-import type { RecipeDetailsData, Recipe, RecipeComment, RecipeUpdateData, CreateRecipeDto } from "@/models/Recipe"
+import type { RecipeDetailsData, Recipe, RecipeComment, CreateRecipeDto, UpdateRecipeDto } from "@/models/Recipe"
 import { users } from "./users"
 import type { UserViewData } from "@/models/User"
 import type { LoginResult, LoginUserData } from "@/models/Auth"
@@ -177,8 +177,6 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-    //....... to do
-
     public createRecipe = async (token: string, recipe: CreateRecipeDto): Promise<RecipeDetailsData> => {
         return asTimedPromise<RecipeDetailsData>((resolve) => {
             const newRecipe: Recipe = {
@@ -200,21 +198,35 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-    public updateRecipe = async (recipeId: number, data: RecipeUpdateData): Promise<Recipe | undefined> => {
-        return asTimedPromise<Recipe | undefined>((resolve) => {
-            const id = InMemoryDB.recipes.findIndex(r => r.id === recipeId)
+    //....... to do
 
-            if (id === -1) {
-                resolve(undefined)
-                return
+    public updateRecipe = async (
+        token: string,
+        recipeId: number,
+        data: UpdateRecipeDto
+    ): Promise<RecipeDetailsData> => {
+        return asTimedPromise<RecipeDetailsData>((resolve) => {
+            const index = InMemoryDB.recipes.findIndex(r => r.id === recipeId)
+
+            if (index === -1) {
+                throw 'recipe not found'
             }
 
-            InMemoryDB.recipes[id] = {
-                ...InMemoryDB.recipes[id],
-                ...data
+            const existing = InMemoryDB.recipes[index]
+
+            const updated: Recipe = {
+                ...existing,
+                title: data.title ?? existing.title,
+                tags: data.tags ? [...data.tags] : existing.tags,
+                imageUrl: data.imageUrl ?? existing.imageUrl,
+                ingredients: data.ingredients ? [...data.ingredients] : existing.ingredients,
+                description: data.description ?? existing.description,
+                steps: data.steps ? [...data.steps] : existing.steps
             }
 
-            resolve(InMemoryDB.recipes[id])
+            InMemoryDB.recipes[index] = updated
+            const details = this.getRecipeDetails(token, updated.id)!
+            resolve(details)
         })
     }
 

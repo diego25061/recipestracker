@@ -43,4 +43,4 @@ export interface CreateRecipeDto {
     steps: string[]
 }
 
-export type RecipeUpdateData = Omit<Recipe, 'id' | 'comments' | 'favoritedBy'>
+export type UpdateRecipeDto = Partial<CreateRecipeDto> 

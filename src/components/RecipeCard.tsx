@@ -1,5 +1,5 @@
 import { Tag } from 'antd'
-//import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { css } from '@emotion/css'
 
 
@@ -30,6 +30,8 @@ const emotionCardStyle = css`
                     rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
         cursor: pointer;
     }
+
+    position: relative;
 `
 
 const cardImgContainer = css`
@@ -75,8 +77,28 @@ const singleTagStyle = css`
     margin-top: 4px;
 `
 
+const editButtonStyle = css`
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    width: 40px;
+    height: 40px;
+    background-color: #ffffffaf;
+    margin: 4px;
+    border-radius: 4px;
+
+    &:hover {
+        box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+        transform: translateY(2px);
+        cursor: pointer;
+    }
+`
+
 export const RecipeCard: React.FC<RecipeCardProps> = (
-    { id, title, author, tags, image, onRecipeClick,/* handleEdit, handleDelete, renderMode = 'view' */ }
+    { id, title, author, tags, image, onRecipeClick, handleEdit, handleDelete, renderMode = 'view' }
 ) => (<>
     {/*
     <Card
@@ -112,6 +134,16 @@ export const RecipeCard: React.FC<RecipeCardProps> = (
         className={emotionCardStyle}
         onClick={() => onRecipeClick(id)}
     >
+        {renderMode === 'editDelete' && <div className={editButtonStyle}>
+            <EditOutlined
+                style={{ fontSize: 22, color: '#231818' }}
+                key="edit"
+                onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation()
+                    handleEdit?.(id)
+                }}
+            />
+        </div>}
         <div className={cardImgContainer}>
             <img alt={title} className={cardImg} src={image} />
         </div>
@@ -121,7 +153,6 @@ export const RecipeCard: React.FC<RecipeCardProps> = (
             <div className={cardTags}>
                 {tags.map(tag => <Tag className={singleTagStyle} key={tag}>{tag}</Tag>)}
             </div>
-
         </div>
     </div>
 </>

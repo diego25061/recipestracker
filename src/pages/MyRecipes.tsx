@@ -7,19 +7,20 @@ import { getUserRecipes } from '@/api/recipes'
 import { PaddingContainer } from '@/components/layout/PaddingContainer'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useAuthStore } from '@/context/AuthContext'
-import { AddRecipeModal } from '@/components/modals/AddRecipeModal'
+import { AddEditRecipeModal } from '@/components/modals/AddEditRecipeModal'
 import { notifySuccess } from '@/utils/notifications'
 
 const { Title } = Typography
 
 export const MyRecipesPage: React.FC = () => {
-    //const navigate = useNavigate()
     const [recipes, setRecipes] = useState<RecipeDetailsData[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [isModalOpen, setModalOpen] = useState(false)
+    const [isCreationModalOpen, setCreationModalOpen] = useState(false)
+    const [isEditionModalOpen, setEditionModalOpen] = useState(false)
     const { isAuthenticated, jwt } = useAuthStore()
     const { notification: notificationInstance } = App.useApp()
+    const [editigRecipeId, setEditingRecipeId] = useState<number>(0)
 
     const loadRecipes = useCallback(async (showLoading: boolean) => {
         try {
@@ -44,6 +45,8 @@ export const MyRecipesPage: React.FC = () => {
 
     const handleEdit = (id: number) => {
         message.info(`Edit recipe #${id}`)
+        setEditingRecipeId(id)
+        setEditionModalOpen(true)
     }
 
     const handleDelete = (id: number) => {
@@ -51,7 +54,7 @@ export const MyRecipesPage: React.FC = () => {
     }
 
     const onRecipeCreated = (recipe: RecipeDetailsData) => {
-        setModalOpen(false)
+        setCreationModalOpen(false)
         notifySuccess(
             notificationInstance,
             `Recipe '${recipe.title}' created`,
@@ -59,10 +62,18 @@ export const MyRecipesPage: React.FC = () => {
         loadRecipes(false)
     }
 
+    const onRecipeEdited = (recipe: RecipeDetailsData) => {
+        setEditionModalOpen(false)
+        notifySuccess(
+            notificationInstance,
+            `Recipe '${recipe.title}' modified`,
+        )
+        loadRecipes(false)
+    }
+
     return (
         <>
             <PaddingContainer >
-
                 <div
                     style={{
                         display: 'flex',
@@ -77,7 +88,7 @@ export const MyRecipesPage: React.FC = () => {
                         type="primary"
                         icon={<PlusOutlined />}
                         size="large"
-                        onClick={() => setModalOpen(true)}
+                        onClick={() => setCreationModalOpen(true)}
                     >
                         Add New Recipe
                     </Button>
@@ -104,7 +115,16 @@ export const MyRecipesPage: React.FC = () => {
                 renderMode='editDelete'
             />
 
-            <AddRecipeModal open={isModalOpen} onClose={() => { setModalOpen(false) }} onSuccessfulRecipeCreation={onRecipeCreated} />
+            <AddEditRecipeModal
+                open={isCreationModalOpen} 
+                onClose={() => { setCreationModalOpen(false) }}
+                onSuccessfulRecipeCreation={onRecipeCreated} />
+
+            <AddEditRecipeModal
+                open={isEditionModalOpen}
+                editId={editigRecipeId}
+                onClose={() => { setEditionModalOpen(false) }}
+                onSuccessfulRecipeEdit={onRecipeEdited} />
         </>
     )
 }
