@@ -1,12 +1,14 @@
-import { Alert, Button, message, Typography } from 'antd'
+import { Alert, App, Button, message, Typography } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { RecipeGrid } from '@/components/RecipeGrid'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { RecipeDetailsData } from '@/models/Recipe'
 import { getUserRecipes } from '@/api/recipes'
 import { PaddingContainer } from '@/components/layout/PaddingContainer'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useAuthStore } from '@/context/AuthContext'
+import { AddRecipeModal } from '@/components/modals/AddRecipeModal'
+import { notifySuccess } from '@/utils/notifications'
 
 const { Title } = Typography
 
@@ -15,42 +17,46 @@ export const MyRecipesPage: React.FC = () => {
     const [recipes, setRecipes] = useState<RecipeDetailsData[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [isModalOpen, setModalOpen] = useState(false)
     const { isAuthenticated, jwt } = useAuthStore()
+    const { notification: notificationInstance } = App.useApp()
+
+    const loadRecipes = useCallback(async (showLoading: boolean) => {
+        try {
+            setLoading(showLoading)
+            if (isAuthenticated) {
+                const data = await getUserRecipes(jwt!)
+                setRecipes(data)
+            } else {
+                throw 'not authenticated'
+            }
+        } catch (err) {
+            console.error(err)
+            setError("Could not load recipes")
+        } finally {
+            setLoading(false)
+        }
+    }, [isAuthenticated, jwt])
 
     useEffect(() => {
-        const load = async () => {
-            try {
-                setLoading(true)
-                if (isAuthenticated) {
-                    const data = await getUserRecipes(jwt!)
-                    setRecipes(data)
-                } else {
-                    throw 'not authenticated'
-                }
-            } catch (err) {
-                console.error(err)
-                setError("Could not load recipes")
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        load()
-    }, [jwt, isAuthenticated])
+        loadRecipes(true)
+    }, [loadRecipes])
 
     const handleEdit = (id: number) => {
         message.info(`Edit recipe #${id}`)
-        // navigate(`/recipes/edit/${id}`)
     }
 
     const handleDelete = (id: number) => {
         message.success(`Recipe #${id} deleted (mock)`)
-        // TODO: Remove from state later
     }
 
-    const handleAddNew = () => {
-        message.info('Redirecting to Create Recipe...')
-        // navigate('/recipes/new')
+    const onRecipeCreated = (recipe: RecipeDetailsData) => {
+        setModalOpen(false)
+        notifySuccess(
+            notificationInstance,
+            `Recipe '${recipe.title}' created`,
+        )
+        loadRecipes(false)
     }
 
     return (
@@ -71,7 +77,7 @@ export const MyRecipesPage: React.FC = () => {
                         type="primary"
                         icon={<PlusOutlined />}
                         size="large"
-                        onClick={handleAddNew}
+                        onClick={() => setModalOpen(true)}
                     >
                         Add New Recipe
                     </Button>
@@ -97,6 +103,8 @@ export const MyRecipesPage: React.FC = () => {
                 handleDelete={handleDelete}
                 renderMode='editDelete'
             />
+
+            <AddRecipeModal open={isModalOpen} onClose={() => { setModalOpen(false) }} onSuccessfulRecipeCreation={onRecipeCreated} />
         </>
     )
 }

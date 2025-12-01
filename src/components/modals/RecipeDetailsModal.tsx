@@ -2,7 +2,7 @@ import { Modal, Space, Tag, Input, Button, Image, Typography, App } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import type { RecipeDetailsData } from '@/models/Recipe'
 import {
-    fetchRecipeDetails,
+    getRecipeDetails,
     postRecipeComment,
     setFavoriteRecipe
 } from '@/api/recipes'
@@ -80,10 +80,10 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
 
     const { isAuthenticated, jwt } = useAuthStore()
 
-    const loadRecipe = useCallback(async () => {
-        setLoading(true)
+    const loadRecipe = useCallback(async (showLoading: boolean) => {
+        setLoading(showLoading)
         try {
-            const data = await fetchRecipeDetails(jwt, recipeId)
+            const data = await getRecipeDetails(jwt, recipeId)
             setRecipe(data)
             setFavorite(data?.isFavorite ?? false)
         } catch (err) {
@@ -97,7 +97,7 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
             setRecipe(undefined)
             return
         }
-        loadRecipe()
+        loadRecipe(true)
     }, [recipeId, loadRecipe])
 
     const handleAddComment = async () => {
@@ -112,7 +112,7 @@ export const RecipeDetailsModal: React.FC<RecipeDetailsModalProps> = ({ recipeId
             )
             //loading the full recipe again ensures the comments list is shown consistently. appending
             //the newly added is an option with drawbacks
-            loadRecipe()
+            loadRecipe(false)
         } catch (err) {
             console.error(err)
             notifyError(

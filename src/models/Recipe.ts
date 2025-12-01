@@ -33,7 +33,14 @@ export interface RecipeDetailsData extends Recipe {
     comments?: RecipeCommentViewData[]
 }
 
+export interface CreateRecipeDto {
+    title: string
+    tags: string[]
+    imageUrl: string
 
-export type RecipeInputData = Omit<Recipe, 'id' | 'comments' | 'favoritedBy'>
+    ingredients: string[]
+    description?: string
+    steps: string[]
+}
 
 export type RecipeUpdateData = Omit<Recipe, 'id' | 'comments' | 'favoritedBy'>

@@ -1,5 +1,5 @@
 import { LocalMemoryApi } from '@/mock/memoryDataService'
-import type { RecipeComment, RecipeDetailsData } from '@/models/Recipe'
+import type { CreateRecipeDto, RecipeComment, RecipeDetailsData } from '@/models/Recipe'
 
 ///API functions called from the react components
 
@@ -14,7 +14,7 @@ export const getUserRecipes = async (token: string): Promise<RecipeDetailsData[]
     return LocalMemoryApi.fetchUserRecipes(token)
 }
 
-export const fetchRecipeDetails = async (token: string | null, recipeId: number): Promise<RecipeDetailsData | undefined> => {
+export const getRecipeDetails = async (token: string | null, recipeId: number): Promise<RecipeDetailsData | undefined> => {
     return LocalMemoryApi.fetchRecipeDetails(token, recipeId)
 }
 
@@ -24,4 +24,8 @@ export const postRecipeComment = async (token: string, recipeId: number, text: s
 
 export const setFavoriteRecipe = async (token: string, recipeId: number, newVal: boolean): Promise<boolean> => {
     return LocalMemoryApi.setFavoriteRecipe(token, recipeId, newVal)
+}
+
+export const postRecipe = async (token: string, recipeData: CreateRecipeDto): Promise<RecipeDetailsData> => {
+    return LocalMemoryApi.createRecipe(token,recipeData)
 }

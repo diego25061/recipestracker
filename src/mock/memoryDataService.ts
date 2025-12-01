@@ -1,4 +1,4 @@
-import type { RecipeDetailsData, Recipe, RecipeComment, RecipeInputData, RecipeUpdateData } from "@/models/Recipe"
+import type { RecipeDetailsData, Recipe, RecipeComment, RecipeUpdateData, CreateRecipeDto } from "@/models/Recipe"
 import { users } from "./users"
 import type { UserViewData } from "@/models/User"
 import type { LoginResult, LoginUserData } from "@/models/Auth"
@@ -29,10 +29,6 @@ export class InMemoryApi implements ApiActionsRecipes {
     private nextCommentId = 1000
     private nextRecipeId = 1000
 
-    private getUsername = (userId: number): string => {
-        return users.find(u => u.id === userId)?.username ?? 'Unknown'
-    }
-
     private getUserViewData = (userId: number): UserViewData => {
         const u = users.find(u => u.id === userId)
         if (!u) throw 'user not found'
@@ -60,6 +56,22 @@ export class InMemoryApi implements ApiActionsRecipes {
         const userId = parseInt(token.substring(0, token.indexOf('_') ?? 0))
         if (!users.find(u => u.id === userId)) throw 'user not found: invalid token'
         return userId
+    }
+
+    private getRecipeDetails = (token: string | null, recipeId: number): RecipeDetailsData | undefined => {
+        const rec = InMemoryDB.recipes.find(x => x.id === recipeId)
+        if (!rec) {
+            return undefined
+        }
+        return {
+            ...rec,
+            authorData: this.getUserViewData(rec.authorId),
+            isFavorite: isDefinedNotEmpty(token) ? this.isFavoritedByUser(rec, this.userIdFromToken(token)) : undefined,
+            comments: rec.comments?.map(x => ({
+                ...x,
+                authorData: this.getUserViewData(x.userId)
+            }))
+        } satisfies RecipeDetailsData
     }
 
     //public controllers?
@@ -138,23 +150,10 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
+
     public fetchRecipeDetails = async (token: string | null, recipeId: number): Promise<RecipeDetailsData | undefined> => {
         return asTimedPromise((resolve) => {
-            const rec = InMemoryDB.recipes.find(x => x.id === recipeId)
-            if (!rec) {
-                resolve(undefined)
-                return
-            }
-            const fullRecipe: RecipeDetailsData = {
-                ...rec,
-                authorData: this.getUserViewData(rec.authorId),
-                isFavorite: isDefinedNotEmpty(token) ? this.isFavoritedByUser(rec, this.userIdFromToken(token)) : undefined,
-                comments: rec.comments?.map(x => ({
-                    ...x,
-                    authorData: this.getUserViewData(x.userId)
-                }))
-            }
-            resolve(fullRecipe)
+            resolve(this.getRecipeDetails(token, recipeId))
         })
     }
 
@@ -180,17 +179,24 @@ export class InMemoryApi implements ApiActionsRecipes {
 
     //....... to do
 
-    public createRecipe = async (recipe: RecipeInputData): Promise<Recipe> => {
-        return asTimedPromise<Recipe>((resolve) => {
+    public createRecipe = async (token: string, recipe: CreateRecipeDto): Promise<RecipeDetailsData> => {
+        return asTimedPromise<RecipeDetailsData>((resolve) => {
             const newRecipe: Recipe = {
-                ...recipe,
                 id: this.nextRecipeId++,
+                authorId: this.userIdFromToken(token),
+
+                title: recipe.title,
+                tags: recipe.tags,
+                imageUrl: recipe.imageUrl,
+                ingredients: [...recipe.ingredients],
+                description: recipe.description,
+                steps: [...recipe.steps],
                 comments: [],
-                favoritedBy: []
+                favoritedBy: [],
             }
 
             InMemoryDB.recipes.push(newRecipe)
-            resolve(newRecipe)
+            resolve(this.getRecipeDetails(token, newRecipe.id)!)
         })
     }
 
