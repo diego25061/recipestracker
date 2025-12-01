@@ -33,3 +33,7 @@ export const postRecipe = async (token: string, recipeData: CreateRecipeDto): Pr
 export const updateRecipe = async (token: string, recipeId: number, recipeData: CreateRecipeDto): Promise<RecipeDetailsData> => {
     return LocalMemoryApi.updateRecipe(token, recipeId, recipeData)
 }
+
+export const deleteRecipe = async (token: string, recipeId: number): Promise<void> => {
+    LocalMemoryApi.deleteRecipe(token, recipeId)
+}

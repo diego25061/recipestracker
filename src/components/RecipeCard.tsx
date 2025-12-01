@@ -1,7 +1,6 @@
-import { Tag } from 'antd'
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { App, Tag } from 'antd'
+import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import { css } from '@emotion/css'
-
 
 interface RecipeCardProps {
     id: number
@@ -76,84 +75,89 @@ const cardTags = css`
 const singleTagStyle = css`
     margin-top: 4px;
 `
-
-const editButtonStyle = css`
+const actionButtonStyle = css`
     display: flex;
     justify-content: center;
     position: absolute;
     right: 0px;
     top: 0px;
+
+    color: #231818;
+    font-size: 20px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     width: 40px;
     height: 40px;
     background-color: #ffffffaf;
     margin: 4px;
-    border-radius: 4px;
+    border-radius: 2px;
 
     &:hover {
         box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-        transform: translateY(2px);
+        transform: translateY(-1px);
         cursor: pointer;
     }
 `
 
+const editButtonStyle = css`
+    margin-right: 44px;
+    border-radius: 2px 0px 0px 2px; 
+`
+
+const deleteButtonStyle = css`
+    color: #cb0000;
+    background-color: #ffafaf7f;
+    border-radius: 0px 2px 2px 0px; 
+`
+
 export const RecipeCard: React.FC<RecipeCardProps> = (
     { id, title, author, tags, image, onRecipeClick, handleEdit, handleDelete, renderMode = 'view' }
-) => (<>
-    {/*
-    <Card
-        key={id}
-        hoverable
-        cover={<img alt={title} src={image} />}
-        style={{ margin: 4 }}
-        onClick={() => onRecipeClick(id)}
+) => {
+    const { modal } = App.useApp();
 
-        actions={renderMode === 'editDelete' ? [
-            <EditOutlined
-                key="edit"
-                onClick={() => handleEdit?.(id)}
-            />,
-            <Popconfirm
-                key="delete"
-                title="Delete this recipe?"
-                okText="Yes"
-                cancelText="No"
-                onConfirm={() => handleDelete?.(id)}
-            >
-                <DeleteOutlined />
-            </Popconfirm>,
-        ] : []}
-    >
-        <Card.Meta title={title} description={`by ${author}`} />
-        <div style={{ marginTop: '0.5rem' }}>
-            {tags.map(tag => <Tag key={tag}>{tag}</Tag>)}
-        </div>
-    </Card>
-    */}
-    <div
-        className={emotionCardStyle}
-        onClick={() => onRecipeClick(id)}
-    >
-        {renderMode === 'editDelete' && <div className={editButtonStyle}>
-            <EditOutlined
-                style={{ fontSize: 22, color: '#231818' }}
-                key="edit"
-                onClick={(e: React.MouseEvent) => {
-                    e.stopPropagation()
-                    handleEdit?.(id)
-                }}
-            />
-        </div>}
-        <div className={cardImgContainer}>
-            <img alt={title} className={cardImg} src={image} />
-        </div>
-        <div className={cardInfo}>
-            <div className={cardInfoTitle}>{title}</div>
-            <div className={cardInfoAuthor}>{`by ${author}`}</div>
-            <div className={cardTags}>
-                {tags.map(tag => <Tag className={singleTagStyle} key={tag}>{tag}</Tag>)}
+    const showConfirm = () => {
+        modal.confirm({
+            title: `Do you want to delete recipe '${title}'?`,
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+                handleDelete?.(id)
+            },
+            onCancel() {},
+        });
+    }
+
+    return <>
+        <div
+            className={emotionCardStyle}
+            onClick={() => onRecipeClick(id)}
+        >
+            {renderMode === 'editDelete' && <div className={`${actionButtonStyle} ${editButtonStyle}`}>
+                <EditOutlined
+                    key="edit"
+                    onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation()
+                        handleEdit?.(id)
+                    }}
+                />
+            </div>}
+            {renderMode === 'editDelete' && <div className={`${actionButtonStyle} ${deleteButtonStyle}`}>
+                <DeleteOutlined
+                    key="delete"
+                    onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation()
+                        showConfirm()
+                    }}
+                />
+            </div>}
+            <div className={cardImgContainer}>
+                <img alt={title} className={cardImg} src={image} />
+            </div>
+            <div className={cardInfo}>
+                <div className={cardInfoTitle}>{title}</div>
+                <div className={cardInfoAuthor}>{`by ${author}`}</div>
+                <div className={cardTags}>
+                    {tags.map(tag => <Tag className={singleTagStyle} key={tag}>{tag}</Tag>)}
+                </div>
             </div>
         </div>
-    </div>
-</>
-)
+    </>
+}

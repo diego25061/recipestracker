@@ -1,9 +1,9 @@
-import { Alert, App, Button, message, Typography } from 'antd'
+import { Alert, App, Button, Typography } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { RecipeGrid } from '@/components/RecipeGrid'
 import { useCallback, useEffect, useState } from 'react'
 import type { RecipeDetailsData } from '@/models/Recipe'
-import { getUserRecipes } from '@/api/recipes'
+import { deleteRecipe, getUserRecipes } from '@/api/recipes'
 import { PaddingContainer } from '@/components/layout/PaddingContainer'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { useAuthStore } from '@/context/AuthContext'
@@ -44,13 +44,25 @@ export const MyRecipesPage: React.FC = () => {
     }, [loadRecipes])
 
     const handleEdit = (id: number) => {
-        message.info(`Edit recipe #${id}`)
         setEditingRecipeId(id)
         setEditionModalOpen(true)
     }
 
-    const handleDelete = (id: number) => {
-        message.success(`Recipe #${id} deleted (mock)`)
+    const handleDelete = async (recipeId: number) => {
+        try {
+            setLoading(true)
+            if (isAuthenticated) {
+                await deleteRecipe(jwt!, recipeId)
+                loadRecipes(false)
+            } else {
+                throw 'not authenticated'
+            }
+        } catch (err) {
+            console.error(err)
+            setError("Could not load recipes")
+        } finally {
+            setLoading(false)
+        }
     }
 
     const onRecipeCreated = (recipe: RecipeDetailsData) => {

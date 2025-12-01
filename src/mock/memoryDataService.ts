@@ -198,8 +198,6 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-    //....... to do
-
     public updateRecipe = async (
         token: string,
         recipeId: number,
@@ -212,7 +210,12 @@ export class InMemoryApi implements ApiActionsRecipes {
                 throw 'recipe not found'
             }
 
+
             const existing = InMemoryDB.recipes[index]
+
+            if (this.userIdFromToken(token) !== existing.authorId) {
+                throw 'unauthorized'
+            }
 
             const updated: Recipe = {
                 ...existing,
@@ -230,14 +233,22 @@ export class InMemoryApi implements ApiActionsRecipes {
         })
     }
 
-    public deleteRecipe = async (recipeId: number): Promise<boolean> => {
+    public deleteRecipe = async (token: string, recipeId: number): Promise<boolean> => {
         return asTimedPromise<boolean>((resolve) => {
+            const recipe = InMemoryDB.recipes.find(r => r.id === recipeId)
+
+            if (!recipe) {
+                throw 'recipe not found'
+            }
+
+            if (this.userIdFromToken(token) !== recipe.authorId) {
+                throw 'unauthorized'
+            }
+            
             InMemoryDB.recipes = InMemoryDB.recipes.filter(r => r.id !== recipeId)
             resolve(InMemoryDB.recipes.every(x => x.id !== recipeId))
         })
     }
-
-
 
 }
 

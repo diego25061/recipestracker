@@ -9,7 +9,6 @@ const { useBreakpoint } = Grid;
 interface RecipeGridProps {
     recipes: RecipeDetailsData[]
     renderMode: 'view' | 'editDelete'
-    //onRecipeClick: (id: number) => void
     handleEdit?: (id: number) => void
     handleDelete?: (id: number) => void
 }
