@@ -26,8 +26,7 @@ export const LoginPage: React.FC = () => {
             navigate('/')
         } catch (err) {
             console.error(err)
-            //needs more tailored messages based on login logic or client networking
-            setError("Invalid username or password")
+            setError(err as string)
         } finally {
             setLoading(false)
         }

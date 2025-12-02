@@ -4,7 +4,7 @@ export const users: User[] = [
     {
         id: 1,
         username: 'Carmen B.',
-        profilePicUrl: 'https://shapes.inc/api/public/avatar/carmencarmyberzatto',
+        profilePicUrl: '/carmin.png',
         loginUser: 'carmen',
         pwd: '123'
     },

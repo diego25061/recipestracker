@@ -4,23 +4,24 @@ import type { UserViewData } from "@/models/User"
 import type { LoginResult, LoginUserData } from "@/models/Auth"
 import { InMemoryDB } from "./memoryDb"
 import { isDefinedNotEmpty } from "@/utils/common"
+import { EMULATED_LOAD_TIME, EMULATED_NETWORK_ERRORS } from "@/components/ControlBar"
 
 interface ApiActionsRecipes {
     fetchRecipeDetails: (token: string | null, recipeId: number) => Promise<RecipeDetailsData | undefined>
 }
 
 const asTimedPromise = <T>(
-    func: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
-    delay: number = 340
+    func: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void
 ): Promise<T> => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             try {
+                if (EMULATED_NETWORK_ERRORS) throw 'Network Error'
                 func(resolve, reject)
             } catch (err) {
                 reject(err)
             }
-        }, delay)
+        }, EMULATED_LOAD_TIME)
     })
 }
 
@@ -125,12 +126,12 @@ export class InMemoryApi implements ApiActionsRecipes {
 
             if (!user) {
                 //should use ambiguous messages here
-                throw ('invalid user')
+                throw ('Invalid username or password')
             }
             //simple text comparison for test purposes, in a proper backend you would use 
             //a hashing with a library like bcrypt
             if (user.pwd !== password) {
-                throw ('invalid username or password')
+                throw ('Invalid username or password')
             }
 
             const userData = {

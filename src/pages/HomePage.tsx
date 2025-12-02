@@ -50,6 +50,15 @@ export const HomePage: React.FC = () => {
         return matchesSearch && matchesTags
     })
 
+    const loadedRecipes = loading ? <LoadingSpinner /> : (
+        filtered && filtered.length > 0 ? <RecipeGrid
+            recipes={filtered}
+            renderMode='view'
+        /> : <Title level={4} style={{ margin: '4rem' }}>
+            No recipes found
+        </Title>
+    )
+
     return (
         <>
             <PaddingContainer >
@@ -81,23 +90,16 @@ export const HomePage: React.FC = () => {
                 </Space>
             </PaddingContainer>
 
-            {loading && <LoadingSpinner />}
-
-            {error && (
+            {error ?
                 <Alert
                     message="Error"
                     description={error}
                     type="error"
                     showIcon
-                    style={{ margin: 16 }}
-                />
-            )}
-
-            <RecipeGrid
-                recipes={filtered}
-                renderMode='view'
-            />
-
+                    style={{ margin: '4rem' }}
+                /> :
+                loadedRecipes
+            }
 
         </>
     )

@@ -83,6 +83,19 @@ export const MyRecipesPage: React.FC = () => {
         loadRecipes(false)
     }
 
+    const loadedRecipes = loading ? <LoadingSpinner /> : (
+        !error && recipes && recipes.length > 0 ?
+            <RecipeGrid
+                recipes={recipes}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                renderMode='editDelete'
+            /> :
+            <Title level={4} style={{ margin: '4rem' }}>
+                You haven't created any recipes yet
+            </Title>
+    )
+
     return (
         <>
             <PaddingContainer >
@@ -108,27 +121,18 @@ export const MyRecipesPage: React.FC = () => {
 
             </PaddingContainer>
 
-            {loading && <LoadingSpinner />}
-
-            {error && (
+            {error ? 
                 <Alert
                     message="Error"
                     description={error}
                     type="error"
                     showIcon
-                    style={{ margin: 16 }}
-                />
-            )}
-
-            <RecipeGrid
-                recipes={recipes}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                renderMode='editDelete'
-            />
+                    style={{ margin: '4rem' }}
+                /> : loadedRecipes
+            }
 
             <AddEditRecipeModal
-                open={isCreationModalOpen} 
+                open={isCreationModalOpen}
                 onClose={() => { setCreationModalOpen(false) }}
                 onSuccessfulRecipeCreation={onRecipeCreated} />
 
