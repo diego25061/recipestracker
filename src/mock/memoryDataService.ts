@@ -29,6 +29,7 @@ export class InMemoryApi implements ApiActionsRecipes {
 
     private nextCommentId = 1000
     private nextRecipeId = 1000
+    private nextUserId = 1000
 
     private getUserViewData = (userId: number): UserViewData => {
         const u = users.find(u => u.id === userId)
@@ -248,6 +249,29 @@ export class InMemoryApi implements ApiActionsRecipes {
             
             InMemoryDB.recipes = InMemoryDB.recipes.filter(r => r.id !== recipeId)
             resolve(InMemoryDB.recipes.every(x => x.id !== recipeId))
+        })
+    }
+
+    public registerUser = async (
+        name: string,
+        loginUser: string,
+        password: string
+    ): Promise<void> => {
+        return asTimedPromise<void>((resolve) => {
+            const exists = InMemoryDB.users.find(x => x.loginUser === loginUser)
+            if (exists) throw ('User already exists')
+
+            const newId = this.nextUserId++;
+
+            const newUser = {
+                id: newId,
+                username: name,
+                loginUser,
+                pwd: password
+            }
+
+            InMemoryDB.users.push(newUser)
+            resolve()
         })
     }
 

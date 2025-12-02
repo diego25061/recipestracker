@@ -72,6 +72,7 @@ export const LoginPage: React.FC = () => {
                                     placeholder="••••••••"
                                 />
                             </Form.Item>
+
                             {error && (
                                 <Form.Item>
                                     <Alert
@@ -81,6 +82,7 @@ export const LoginPage: React.FC = () => {
                                     />
                                 </Form.Item>
                             )}
+                            
                             <Form.Item>
                                 {
                                     loading ?

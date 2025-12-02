@@ -14,10 +14,12 @@ interface RecipeCardProps {
     renderMode?: 'view' | 'editDelete'
 }
 
+const cardBorderRadius = 8
+
 const emotionCardStyle = css`
     text-align: center;
     background-color: white;
-    border-radius: 8px;
+    border-radius: ${cardBorderRadius}px;
     margin: 4px;
     display: flex;
     flex-direction: column;
@@ -44,6 +46,7 @@ const cardImg = css`
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: ${cardBorderRadius}px ${cardBorderRadius}px 0px 0px;
 `
 
 const cardInfo = css`
@@ -106,7 +109,7 @@ const editButtonStyle = css`
 const deleteButtonStyle = css`
     color: #cb0000;
     background-color: #ffafaf7f;
-    border-radius: 0px 2px 2px 0px; 
+    border-radius: 0px 6px 2px 0px; 
 `
 
 export const RecipeCard: React.FC<RecipeCardProps> = (

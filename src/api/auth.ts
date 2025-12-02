@@ -9,3 +9,7 @@ import type { LoginResult } from '@/models/Auth'
 export const apiLogin = async (username: string, password: string): Promise<LoginResult> => {
     return LocalMemoryApi.login(username,password)
 }
+
+export const apiRegister = async (fullName:string, email:string, password:string):Promise<void>=>{
+    return LocalMemoryApi.registerUser(fullName,email,password)
+}
