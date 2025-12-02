@@ -33,7 +33,7 @@ export class InMemoryApi implements ApiActionsRecipes {
 
     private getUserViewData = (userId: number): UserViewData => {
         const u = users.find(u => u.id === userId)
-        if (!u) throw 'user not found'
+        if (!u) throw `user ${userId} not found`
         return {
             id: u.id,
             username: u.username,

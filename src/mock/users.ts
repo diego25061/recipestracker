@@ -65,5 +65,11 @@ export const users: User[] = [
         username: 'Maya',
         loginUser: 'maya',
         pwd: '123'
+    },
+    {
+        id: 11,
+        username: 'Sidney',
+        loginUser: 'sidney',
+        pwd: '123'
     }
 ];
