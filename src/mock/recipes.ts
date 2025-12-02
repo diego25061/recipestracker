@@ -133,9 +133,9 @@ export const recipes: Recipe[] = [
     {
         id: 11,
         authorId: 6,
-        title: '/citrus-salmon.png',
+        title: 'Citrus Poached Salmon with Herb Oil',
         tags: ['Modern', 'Healthy'],
-        imageUrl: 'https://picsum.photos/id/1070/430/360',
+        imageUrl: '/citrus-salmon.png',
         ingredients: [
             '2 salmon fillets',
             '1 orange (sliced)',
