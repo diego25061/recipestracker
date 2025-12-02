@@ -1,9 +1,10 @@
-import { Slider, Switch, Card, Space } from "antd";
+import { Slider, Switch, Card, Space, Button } from "antd";
 import { WifiOutlined, UserOutlined, CloseOutlined, SettingOutlined } from "@ant-design/icons"
 import { useState } from "react"
 import { css } from "@emotion/css"
 import { useAuthStore } from "@/context/AuthContext"
 import { apiLogin } from "@/api/auth"
+import { STORAGE_KEY } from "@/mock/memoryDb";
 
 const controlBarStyle = css`
     position: fixed;
@@ -53,6 +54,11 @@ export const ControlBar: React.FC = () => {
         const loginResult = await apiLogin('carmen', '123')
         setJwt(loginResult.jwt)
         setUserData(loginResult.userData)
+    }
+
+    const handleReset = async () => {
+        localStorage.removeItem(STORAGE_KEY)
+        window.location.reload()
     }
 
     return (
@@ -128,6 +134,10 @@ export const ControlBar: React.FC = () => {
                         />
                         <span>Logged In</span>
                     </Space>
+
+                    <Button onClick={handleReset} style={{ marginTop: 4 }}>
+                        Reset DB
+                    </Button>
                 </Space>
             </Card>
     )

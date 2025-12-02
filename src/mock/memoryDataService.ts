@@ -113,11 +113,13 @@ export class InMemoryApi implements ApiActionsRecipes {
             recipe.favoritedBy = recipe.favoritedBy ?? []
             if (newValue === false) {
                 recipe.favoritedBy = recipe.favoritedBy.filter(id => id !== userId)
+                InMemoryDB.saveToStorage()
                 resolve(false)
             } else {
                 recipe.favoritedBy.push(userId)
+                InMemoryDB.saveToStorage()
                 resolve(true)
-            }
+            } 
         })
     }
 
@@ -175,6 +177,8 @@ export class InMemoryApi implements ApiActionsRecipes {
             recipe.comments = recipe.comments ?? []
             recipe.comments.push(comment)
 
+            InMemoryDB.saveToStorage()
+
             resolve(comment)
         })
     }
@@ -196,6 +200,7 @@ export class InMemoryApi implements ApiActionsRecipes {
             }
 
             InMemoryDB.recipes.push(newRecipe)
+            InMemoryDB.saveToStorage()
             resolve(this.getRecipeDetails(token, newRecipe.id)!)
         })
     }
@@ -230,6 +235,7 @@ export class InMemoryApi implements ApiActionsRecipes {
             }
 
             InMemoryDB.recipes[index] = updated
+            InMemoryDB.saveToStorage()
             const details = this.getRecipeDetails(token, updated.id)!
             resolve(details)
         })
@@ -248,6 +254,7 @@ export class InMemoryApi implements ApiActionsRecipes {
             }
             
             InMemoryDB.recipes = InMemoryDB.recipes.filter(r => r.id !== recipeId)
+            InMemoryDB.saveToStorage()
             resolve(InMemoryDB.recipes.every(x => x.id !== recipeId))
         })
     }
@@ -271,6 +278,7 @@ export class InMemoryApi implements ApiActionsRecipes {
             }
 
             InMemoryDB.users.push(newUser)
+            InMemoryDB.saveToStorage()
             resolve()
         })
     }
