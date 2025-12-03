@@ -23,7 +23,8 @@ const emotionCardStyle = css`
     margin: 4px;
     display: flex;
     flex-direction: column;
-
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 1px;
+    
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     &:hover {
         transform: translateY(-2px);
@@ -39,6 +40,7 @@ const cardImgContainer = css`
     flex: 3;
     overflow: hidden;
     box-sizing: border-box;
+    max-height: 150px;
 `
 
 const cardImg = css`
