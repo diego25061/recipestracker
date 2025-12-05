@@ -7,6 +7,7 @@ Deployed in a DigitalOcean VPS using express js + pm2
 
 ## Tech stack
 
-Node.js / Express
-React (Vite build)
-PM2
+* ReactJS
+* Vite
+* Node.js / Express
+* PM2

@@ -138,6 +138,7 @@ export const ControlBar: React.FC = () => {
                     <Button onClick={handleReset} style={{ marginTop: 4 }}>
                         Reset DB
                     </Button>
+                    <em style={{ float: 'right' }}>Built by Diego R.</em>
                 </Space>
             </Card>
     )
